@@ -1,5 +1,4 @@
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const nodemailer = require('nodemailer');
 
 exports.handler = async (event, context) => {
     if (event.httpMethod !== 'POST') {
@@ -12,16 +11,25 @@ exports.handler = async (event, context) => {
     const data = JSON.parse(event.body);
     console.log('Received data:', data);
 
+    // Konfigurasi transporter Gmail menggunakan environment variables
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GMAIL_USER, // Mengambil email dari environment variable
+            pass: process.env.GMAIL_PASSWORD, // Mengambil password dari environment variable
+        },
+    });
+
     // Kirim email
-    const msg = {
+    const mailOptions = {
+        from: process.env.GMAIL_USER, // Email pengirim
         to: 'gerhanagulita@gmail.com', // Email tujuan
-        from: 'no-reply@blindxss.com', // Email pengirim (ganti dengan email Anda)
         subject: 'Blind XSS Payload Executed',
         text: `Blind XSS payload executed. Data: ${JSON.stringify(data, null, 2)}`,
     };
 
     try {
-        await sgMail.send(msg);
+        await transporter.sendMail(mailOptions);
         console.log('Email sent');
     } catch (error) {
         console.error('Error sending email:', error);
